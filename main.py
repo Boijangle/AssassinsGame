@@ -6,3 +6,7 @@ p = Player("Dylan")
 
 g.add_players(p)
 g.print_players()
+
+p.set_wanted()
+p.set_death()
+g.print_players()

@@ -8,3 +8,4 @@ class Game:
     def print_players(self):
         for x in self.players:
             x.print_player()
+            print("\n")
