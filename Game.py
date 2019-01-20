@@ -25,18 +25,20 @@ class Game:
         """ finish kill logic """
         """ add wanted list functionality and penalties for bad kills """
         # get killer and victim index
-        kill_ndx = self.get_index(killer)
+        killer_ndx = self.get_index(killer)
         victim_ndx = self.get_index(victim)
 
         # check if killer hit direct target or their assassin
-        if((kill_ndx + 1) % len(self.players) == victim_ndx
-        or (kill_ndx - 1) % len(self.players) == victim_ndx):
-            # increase num kills
-            self.players[kill_ndx].inc_kills()
+        if((killer_ndx + 1) % len(self.players) == victim_ndx
+        or (killer_ndx - 1) % len(self.players) == victim_ndx
+        or self.players[victim_ndx].is_wanted()):
+            # add to kill list
+            self.players[killer_ndx].add_kill(victim)
             # set victim to dead state
             self.players[victim_ndx].set_death(killer)
             # remove victim from live list and add to dead list
             self.dead_players.append(self.players.pop(victim_ndx))
             print("kill confirmed")
         else:
-            print("kill failed")
+            print("invalid kill " + killer + " is on wanted list")
+            self.players[killer_ndx].set_wanted()
