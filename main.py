@@ -1,8 +1,6 @@
-from Player import Player
-from Game import Game
 from Menu import *
 
+m = Menu()
 loop = True
 while loop:
-    intro_menu()
-    choice = input("Enter choice [1-3]: ")
+    loop = m.intro_loop()
