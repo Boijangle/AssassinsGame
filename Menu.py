@@ -6,37 +6,18 @@ class Menu:
         self.game = None
         self.name = "";
 
-    def intro_menu(self):
-        print('-' * 30, "Main Menu", '-' * 30)
-        print("1. New Game")
-        print("2. Open Existing Game")
-        print("3. Exit")
-        print('-' * 71)
-
-    def new_menu(self):
-        print('-' * 30, "New Game: " + self.name, '-' * 30)
-        print("1. Add Player")
-        print("2. Remove Player")
-        print("3. View All Players")
-        print("4. Save and Start")
-        print("5. Back")
-        print('-' * (72 + len(self.name)))
-
-    def game_edit_menu(self):
-        print('-' * 30, "Edit Game: " + self.name, '-' * 30)
-        print("1. Register Kill")
-        print("2. View Alive Players")
-        print("3. View Dead Players")
-        print("4. View Wanted List")
-        print("5. Add Player to Wanted List")
-        print("6. Save")
-        print("7. Back")
-        print('-' * (73 + len(self.name)))
+    def print_menu(self, title, *args):
+        print('-' * 30, title, '-' * 30)
+        x = 1
+        for op in args:
+            print(str(x) + ". " + op)
+            x += 1
+        print('-' * (62 + len(title)))
 
     def intro_loop(self):
         loop = True
         while loop:
-            self.intro_menu()
+            self.print_menu('Main Menu', 'New Game', 'Open Existing Game', 'Exit')
             choice = int(input("Enter choice [1-3]: "))
             if(choice == 1):
                 self.new_game_loop()
@@ -54,7 +35,8 @@ class Menu:
         self.name = input("Enter Name for New Game: ")
         loop = True
         while loop:
-            self.new_menu()
+            self.print_menu('New Game: ' + self.name, 'Add Player', 'Remove Player',
+            'View All Players', 'Save and Start', 'Back')
             choice = int(input("Enter choice [1-5]: "))
             if(choice == 1):
                 player_name = input("Player Name: ")
@@ -78,7 +60,8 @@ class Menu:
     def game_edit_loop(self):
         loop = True
         while loop:
-            self.game_edit_menu()
+            self.print_menu('Edit Game: ' + self.name, 'Register Kill', 'View Alive Players',
+            'View Dead Players', 'View Wanted List', 'Add Player to Wanted List', 'Save', 'Back')
             choice = int(input("Enter choice [1-6]: "))
             if(choice == 1):
                 killer = input("Killer: ")

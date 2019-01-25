@@ -38,6 +38,13 @@ class Game:
         killer_ndx = self.get_index(killer_name)
         victim_ndx = self.get_index(victim_name)
 
+        if killer_ndx is None or victim_ndx is None:
+            if killer_ndx is None:
+                print("Could not find killer: " + killer_name)
+            if victim_ndx is None:
+                print("Could not find victim: " + victim_name)
+            return
+
         # check if killer hit direct target, their assassin, or target was on wanted list
         if((killer_ndx + 1) % len(self.players) == victim_ndx
         or (killer_ndx - 1) % len(self.players) == victim_ndx
