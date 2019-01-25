@@ -1,9 +1,13 @@
 from Player import Player
+from random import shuffle
 class Game:
 
     def __init__(self):
         self.players = []
         self.dead_players = []
+
+    def shuffle_players(self):
+        shuffle(self.players)
 
     def add_player(self, player_name):
         player = Player(player_name)
@@ -16,7 +20,7 @@ class Game:
             del self.players[ndx]
             print("Removed " + player_name)
         else:
-            print("Can't find player " + player_name)
+            print("Can't find player: " + player_name)
 
     def print_players(self):
         for x in self.players:
@@ -24,10 +28,15 @@ class Game:
             print("\n")
 
     def print_dead_players(self):
-        """print players on wanted list"""
         for x in self.dead_players:
             x.print_player()
             print("\n")
+
+    def print_wanted_list(self):
+        for x in self.players:
+            if x.is_wanted():
+                x.print_player()
+                print("\n")
 
     def get_index(self, name):
         gen = (i for i,x in enumerate(self.players) if x.name == name)
@@ -38,11 +47,12 @@ class Game:
         killer_ndx = self.get_index(killer_name)
         victim_ndx = self.get_index(victim_name)
 
+        # check if both the killer and victim were found
         if killer_ndx is None or victim_ndx is None:
             if killer_ndx is None:
-                print("Could not find killer: " + killer_name)
+                print("Can't find killer: " + killer_name)
             if victim_ndx is None:
-                print("Could not find victim: " + victim_name)
+                print("Can't find victim: " + victim_name)
             return
 
         # check if killer hit direct target, their assassin, or target was on wanted list
