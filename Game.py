@@ -1,5 +1,9 @@
 from Player import Player
 from random import shuffle
+from dateutil.parser import parse
+
+import csv
+
 class Game:
 
     def __init__(self):
@@ -70,3 +74,49 @@ class Game:
             # if kill was bad, put killer on wanted list
             print("invalid kill " + killer_name + " is on wanted list")
             self.players[killer_ndx].set_wanted()
+
+    def save_csv(self, filename):
+        with open(filename, mode = 'w', newline='') as save_file:
+            writer = csv.writer(save_file, delimiter=',', quotechar='"')
+            writer.writerow(['id', 'name', 'alive', 'death_time', 'killer', 'wanted',
+            'wanted_time', 'kills'])
+
+            for x in self.players:
+                writer.writerow([x.id, x.name, x.alive, x.death_time, x.killer,
+                x.wanted, x.wanted_time, ', '.join(x.kills)])
+
+            for x in self.dead_players:
+                writer.writerow([x.id, x.name, x.alive, x.death_time, x.killer,
+                x.wanted, x.wanted_time, ', '.join(x.kills)])
+
+    def load_csv(self, filename):
+        with open(filename) as load_file:
+            reader = csv.reader(load_file, delimiter=',')
+            line_count = 0
+            for row in reader:
+                if line_count == 0:
+                    line_count += 1
+                else:
+                    alive = True
+                    want = True
+                    dtime = -1
+                    wtime = -1
+                    if(row[2] == 'False'):
+                        alive = False
+                    if(row[2] == 'True'):
+                        alive = True
+                    if(row[5] == 'False'):
+                        want = False
+                    if(row[5] == 'True'):
+                        want = True
+                    if(row[3] != '-1'):
+                        dtime = parse(row[3])
+                    if(row[6] != '-1'):
+                        wtime = parse(row[3])
+                    player = Player(row[1], int(row[0]), alive, dtime,
+                    row[4], row[5], wtime, row[7].split())
+                    if player.is_alive():
+                        self.players.append(player)
+                    else:
+                        self.dead_players.append(player)
+                    line_count += 1

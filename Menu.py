@@ -15,14 +15,20 @@ class Menu:
         print('-' * (62 + len(title)))
 
     def intro_loop(self):
+        self.game = Game()
         loop = True
         while loop:
             self.print_menu('Main Menu', 'New Game', 'Open Existing Game', 'Exit')
             choice = input("Enter choice [1-3]: ")
             if(choice == '1'):
+                self.game = Game()
                 self.new_game_loop()
             elif(choice == '2'):
+                self.game = Game()
                 file = input("Enter File for Existing Game: ")
+                self.game.load_csv(file)
+                self.name = file
+                self.game_edit_loop()
             elif(choice == '3'):
                 loop = False
                 return loop
@@ -31,7 +37,6 @@ class Menu:
                 print("Invalid Input.")
 
     def new_game_loop(self):
-        self.game = Game()
         self.name = input("Enter Name for New Game: ")
         loop = True
         while loop:
@@ -60,9 +65,17 @@ class Menu:
                         self.game.shuffle_players()
                     elif(shuff != 'n'):
                         print("Invalid input.")
+                self.game.save_csv(self.name)
                 self.game_edit_loop()
             elif(choice == '6'):
-                """ask if save"""
+                sav = ""
+                while sav != 'y' and sav != 'n':
+                    sav = input("Would you like to save? (y/n)")
+                    if(sav == 'y'):
+                        print("Saving...")
+                        self.game.save_csv(self.name)
+                    elif(sav != 'n'):
+                        print("Invalid input.")
                 loop = False
             else:
                 print("Invalid Input.")
@@ -94,9 +107,16 @@ class Menu:
                 self.game.players[self.game.get_index(wanted_name)].set_wanted()
             elif(choice == '6'):
                 print("saving")
-                """ save"""
+                self.game.save_csv(self.name)
             elif(choice == '7'):
-                """ ask if save"""
+                sav = ""
+                while sav != 'y' and sav != 'n':
+                    sav = input("Would you like to save? (y/n)")
+                    if(sav == 'y'):
+                        print("Saving...")
+                        self.game.save_csv(self.name)
+                    elif(sav != 'n'):
+                        print("Invalid input.")
                 loop = False
             else:
                 print("Invalid Input")

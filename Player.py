@@ -3,16 +3,22 @@ import pytz
 
 class Player:
     __last_id = 0
-    def __init__(self, name):
-        self.id = Player.__last_id;
+
+    def __init__(self, name, id = -1, alive = True, death_time = -1,
+    killer = "", wanted = False, wanted_time = -1, kills = None):
+        self.id = id
+        if(id == -1):
+            self.id = Player.__last_id
         self.name = name
-        self.alive = True
-        self.death_time = -1
-        self.killer = ""
-        self.wanted = False
+        self.alive = alive
+        self.death_time = death_time
+        self.killer = killer
+        self.wanted = wanted
         """ do something with this like take them off wanted list"""
-        self.wanted_time = -1
-        self.kills = [];
+        self.wanted_time = wanted_time
+        self.kills = kills
+        if(kills is None):
+            self.kills = []
         Player.__last_id += 1;
 
     def print_player(self):
@@ -24,21 +30,21 @@ class Player:
         return self.name
 
     def set_death(self, killer):
-        self.alive = False;
+        self.alive = False
         self.death_time = datetime.datetime.now(pytz.timezone('America/Chicago'))
         self.wanted = False
         self.wanted_time = -1
         self.killer = killer
 
     def force_death(self):
-            self.alive = False;
+            self.alive = False
             self.death_time = datetime.datetime.now(pytz.timezone('America/Chicago'))
             self.wanted = False
             self.wanted_time = -1
             self.killer = "Forced Death"
 
     def set_wanted(self):
-        self.wanted = True;
+        self.wanted = True
         self.wanted_time = datetime.datetime.now(pytz.timezone('America/Chicago'))
 
     def add_kill(self, victim):
@@ -46,3 +52,6 @@ class Player:
 
     def is_wanted(self):
         return self.wanted
+
+    def is_alive(self):
+        return self.alive
