@@ -1,5 +1,4 @@
-import datetime
-import pytz
+import datetime, pytz
 
 class Player:
     __last_id = 0
@@ -14,7 +13,6 @@ class Player:
         self.death_time = death_time
         self.killer = killer
         self.wanted = wanted
-        """ do something with this like take them off wanted list"""
         self.wanted_time = wanted_time
         self.kills = kills
         if(kills is None):
@@ -46,6 +44,10 @@ class Player:
     def set_wanted(self):
         self.wanted = True
         self.wanted_time = datetime.datetime.now(pytz.timezone('America/Chicago'))
+
+    def remove_wanted(self):
+        self.wanted = False
+        self.wanted_time = -1
 
     def add_kill(self, victim):
         self.kills.append(victim)

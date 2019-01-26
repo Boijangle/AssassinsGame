@@ -1,8 +1,7 @@
 from Player import Player
-from random import shuffle
 from dateutil.parser import parse
-
-import csv
+from random import shuffle
+import csv, datetime, pytz
 
 class Game:
 
@@ -75,16 +74,44 @@ class Game:
             print("invalid kill " + killer_name + " is on wanted list")
             self.players[killer_ndx].set_wanted()
 
+    def check_wanted(self):
+        td = datetime.timedelta(days = 1)
+        now = datetime.datetime.now(pytz.timezone('America/Chicago'))
+        print("Updated Players: \n")
+        for p in self.players:
+            if p.is_wanted():
+                if now - p.wanted_time >= td:
+                    p.remove_wanted()
+
+    def remove_wanted(self, name):
+        ndx = self.get_index(name)
+        if ndx is None:
+            print("Can't find player: " + name)
+        else:
+            self.players[ndx].remove_wanted()
+
+    def add_wanted(self, name):
+        ndx = self.get_index(name)
+        if ndx is None:
+            print("Can't find player: " + name)
+        else:
+            self.players[ndx].set_wanted()
+
     def save_csv(self, filename):
+        # open file
         with open(filename, mode = 'w', newline='') as save_file:
+            # create csv writer with proper delimiters
             writer = csv.writer(save_file, delimiter=',', quotechar='"')
+            # put in header columns
             writer.writerow(['id', 'name', 'alive', 'death_time', 'killer', 'wanted',
             'wanted_time', 'kills'])
 
+            # go thru alive players and add them to list
             for x in self.players:
                 writer.writerow([x.id, x.name, x.alive, x.death_time, x.killer,
                 x.wanted, x.wanted_time, ', '.join(x.kills)])
 
+            # go thru dead players and add them to list
             for x in self.dead_players:
                 writer.writerow([x.id, x.name, x.alive, x.death_time, x.killer,
                 x.wanted, x.wanted_time, ', '.join(x.kills)])
@@ -94,9 +121,11 @@ class Game:
             reader = csv.reader(load_file, delimiter=',')
             line_count = 0
             for row in reader:
+                # skip the first row of headers
                 if line_count == 0:
                     line_count += 1
                 else:
+                    # reformatting strings
                     alive = True
                     want = True
                     dtime = -1
@@ -113,8 +142,12 @@ class Game:
                         dtime = parse(row[3])
                     if(row[6] != '-1'):
                         wtime = parse(row[3])
+
+                    # add player back into game
                     player = Player(row[1], int(row[0]), alive, dtime,
-                    row[4], row[5], wtime, row[7].split())
+                    row[4], want, wtime, row[7].split())
+
+                    # add them to proper list
                     if player.is_alive():
                         self.players.append(player)
                     else:

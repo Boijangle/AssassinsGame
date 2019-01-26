@@ -1,5 +1,6 @@
-from Player import Player
 from Game import Game
+from random import shuffle
+import sys
 
 class Menu:
     def __init__(self):
@@ -13,6 +14,32 @@ class Menu:
             print(str(x) + ". " + op)
             x += 1
         print('-' * (62 + len(title)))
+
+    def save_diag(self):
+        print("Saving...")
+        sav = ""
+        while sav != 'y' and sav != 'n':
+            sav = input("Would you like to save? (y/n)")
+            if(sav == 'y'):
+                print("Saving...")
+                self.game.save_csv(self.name)
+            elif(sav != 'n'):
+                print("Invalid input.")
+
+    def shuff_diag(self):
+        shuff = ""
+        while shuff != 'y' and shuff != 'n':
+            shuff = input("Would you like to shuffle players? (y/n)")
+            if(shuff == 'y'):
+                print("Shuffling...")
+                self.game.shuffle_players()
+            elif(shuff != 'n'):
+                print("Invalid input.")
+
+    def quit_diag(self):
+        self.save_diag()
+        print("Quitting...")
+        sys.exit(0)
 
     def intro_loop(self):
         self.game = Game()
@@ -30,9 +57,7 @@ class Menu:
                 self.name = file
                 self.game_edit_loop()
             elif(choice == '3'):
-                loop = False
-                return loop
-                print("Quitting...")
+                self.quit_diag()
             else:
                 print("Invalid Input.")
 
@@ -56,35 +81,25 @@ class Menu:
                 print("Shuffling...")
                 self.game.shuffle_players()
             elif(choice == '5'):
-                print("saving")
-                shuff = ""
-                while shuff != 'y' and shuff != 'n':
-                    shuff = input("Would you like to shuffle players? (y/n)")
-                    if(shuff == 'y'):
-                        print("Shuffling...")
-                        self.game.shuffle_players()
-                    elif(shuff != 'n'):
-                        print("Invalid input.")
+                self.shuff_diag()
+                print("Saving...")
                 self.game.save_csv(self.name)
                 self.game_edit_loop()
             elif(choice == '6'):
-                sav = ""
-                while sav != 'y' and sav != 'n':
-                    sav = input("Would you like to save? (y/n)")
-                    if(sav == 'y'):
-                        print("Saving...")
-                        self.game.save_csv(self.name)
-                    elif(sav != 'n'):
-                        print("Invalid input.")
+                self.save_diag()
                 loop = False
+            elif(choice == 'q'):
+                self.quit_diag()
             else:
                 print("Invalid Input.")
 
     def game_edit_loop(self):
         loop = True
+        #self.game.check_wanted()
         while loop:
             self.print_menu('Edit Game: ' + self.name, 'Register Kill', 'View Alive Players',
-            'View Dead Players', 'View Wanted List', 'Add Player to Wanted List', 'Save', 'Back')
+            'View Dead Players', 'View Wanted List', 'Add Player to Wanted List', 'Remove Player from Wanted List',
+            'Update Wanted List', 'Save', 'Back')
             choice = input("Enter choice [1-6]: ")
             if(choice == '1'):
                 killer = input("Killer: ")
@@ -101,22 +116,19 @@ class Menu:
                 self.game.print_wanted_list()
             elif(choice == '5'):
                 wanted_name = input("Player name to add: ")
-                if self.game.get_index(wanted_name) is None:
-                    print("Can't find player: " + wanted_name)
-                    continue
-                self.game.players[self.game.get_index(wanted_name)].set_wanted()
+                self.game.add_wanted(wanted_name)
             elif(choice == '6'):
-                print("saving")
-                self.game.save_csv(self.name)
+                remove_name = input("Player name to remove: ")
+                self.game.remove_wanted(remove_name)
             elif(choice == '7'):
-                sav = ""
-                while sav != 'y' and sav != 'n':
-                    sav = input("Would you like to save? (y/n)")
-                    if(sav == 'y'):
-                        print("Saving...")
-                        self.game.save_csv(self.name)
-                    elif(sav != 'n'):
-                        print("Invalid input.")
+                self.game.check_wanted()
+            elif(choice == '8'):
+                print("Saving...")
+                self.game.save_csv(self.name)
+            elif(choice == '9'):
+                self.save_diag()
                 loop = False
+            elif(choice == 'q'):
+                self.quit_diag()
             else:
                 print("Invalid Input")
