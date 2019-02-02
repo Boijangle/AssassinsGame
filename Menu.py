@@ -5,7 +5,8 @@ import sys
 class Menu:
     def __init__(self):
         self.game = None
-        self.name = "";
+        self.name = ""
+        self.log = ""
 
     def print_menu(self, title, *args):
         print('-' * 30, title, '-' * 30)
@@ -54,6 +55,7 @@ class Menu:
                 self.game = Game()
                 file = input("Enter File for Existing Game: ")
                 self.game.load_csv(file)
+                self.log = input("Enter Name of Logfile: ")
                 self.name = file
                 self.game_edit_loop()
             elif(choice == '3'):
@@ -63,6 +65,7 @@ class Menu:
 
     def new_game_loop(self):
         self.name = input("Enter Name for New Game: ")
+        self.log = input("Enter Name for Logfile: ")
         loop = True
         while loop:
             self.print_menu('New Game: ' + self.name, 'Add Player', 'Remove Player',
@@ -84,6 +87,7 @@ class Menu:
                 self.shuff_diag()
                 print("Saving...")
                 self.game.save_csv(self.name)
+                self.game.log_event(self.log, "Game Started")
                 self.game_edit_loop()
             elif(choice == '6'):
                 self.save_diag()
@@ -95,7 +99,8 @@ class Menu:
 
     def game_edit_loop(self):
         loop = True
-        #self.game.check_wanted()
+        good = 0
+        self.game.check_wanted()
         while loop:
             self.print_menu('Edit Game: ' + self.name, 'Register Kill', 'View Alive Players',
             'View Dead Players', 'View Wanted List', 'Add Player to Wanted List', 'Remove Player from Wanted List',
@@ -104,7 +109,13 @@ class Menu:
             if(choice == '1'):
                 killer = input("Killer: ")
                 victim = input("Victim: ")
-                self.game.attempt_kill(killer, victim)
+                good = self.game.attempt_kill(killer, victim)
+                if(good == 0):
+                    notes = input("Extra Notes: ")
+                    self.game.log_event(self.log, killer + " killed " + victim, notes)
+                elif(good == 1):
+                    notes = input("Extra Notes: ")
+                    self.game.log_event(self.log, killer + " placed on wanted list", notes)
             elif(choice == '2'):
                 print("Alive Players: \n")
                 self.game.print_players()
@@ -116,10 +127,16 @@ class Menu:
                 self.game.print_wanted_list()
             elif(choice == '5'):
                 wanted_name = input("Player name to add: ")
-                self.game.add_wanted(wanted_name)
+                good = self.game.add_wanted(wanted_name)
+                if(good):
+                    notes = input("Extra Notes: ")
+                    self.game.log_event(self.log, wanted_name + " placed on wanted list", notes)
             elif(choice == '6'):
                 remove_name = input("Player name to remove: ")
-                self.game.remove_wanted(remove_name)
+                good = self.game.remove_wanted(remove_name)
+                if(good):
+                    notes = input("Extra Notes: ")
+                    self.game.log_event(self.log, wanted_name + " placed on wanted list", notes)
             elif(choice == '7'):
                 self.game.check_wanted()
             elif(choice == '8'):

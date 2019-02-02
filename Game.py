@@ -13,9 +13,16 @@ class Game:
         shuffle(self.players)
 
     def add_player(self, player_name):
-        player = Player(player_name)
-        self.players.append(player)
-        print("Added " + player_name)
+        valid = True
+        for x in self.players:
+            if x.name == player_name:
+                valid = False
+        if(valid):
+            player = Player(player_name)
+            self.players.append(player)
+            print("Added " + player_name)
+        else:
+            print("Player name is already taken")
 
     def remove_player(self, player_name):
         ndx = self.get_index(player_name)
@@ -56,7 +63,7 @@ class Game:
                 print("Can't find killer: " + killer_name)
             if victim_ndx is None:
                 print("Can't find victim: " + victim_name)
-            return
+            return -1
 
         # check if killer hit direct target, their assassin, or target was on wanted list
         if((killer_ndx + 1) % len(self.players) == victim_ndx
@@ -69,10 +76,12 @@ class Game:
             # remove victim from live list and add to dead list
             self.dead_players.append(self.players.pop(victim_ndx))
             print("kill confirmed, " + victim_name + " is dead")
+            return 0
         else:
             # if kill was bad, put killer on wanted list
             print("invalid kill " + killer_name + " is on wanted list")
             self.players[killer_ndx].set_wanted()
+            return 1
 
     def check_wanted(self):
         td = datetime.timedelta(days = 1)
@@ -87,15 +96,19 @@ class Game:
         ndx = self.get_index(name)
         if ndx is None:
             print("Can't find player: " + name)
+            return False
         else:
             self.players[ndx].remove_wanted()
+            return True
 
     def add_wanted(self, name):
         ndx = self.get_index(name)
         if ndx is None:
             print("Can't find player: " + name)
+            return False
         else:
             self.players[ndx].set_wanted()
+            return True
 
     def save_csv(self, filename):
         # open file
@@ -119,6 +132,7 @@ class Game:
     def load_csv(self, filename):
         with open(filename) as load_file:
             reader = csv.reader(load_file, delimiter=',')
+            central = pytz.timezone('America/Chicago')
             line_count = 0
             for row in reader:
                 # skip the first row of headers
@@ -141,7 +155,7 @@ class Game:
                     if(row[3] != '-1'):
                         dtime = parse(row[3])
                     if(row[6] != '-1'):
-                        wtime = parse(row[3])
+                        wtime = parse(row[6])
 
                     # add player back into game
                     player = Player(row[1], int(row[0]), alive, dtime,
@@ -153,3 +167,9 @@ class Game:
                     else:
                         self.dead_players.append(player)
                     line_count += 1
+
+    def log_event(self, filename, event, notes = ''):
+        with open(filename, mode = 'a+') as log_file:
+            log_file.write("Date: " + datetime.datetime.now(pytz.timezone('America/Chicago')).strftime("%Y-%m-%d %H:%M") + '\n')
+            log_file.write("Event: " + event + '\n')
+            log_file.write("Notes: " + notes + '\n\n')
