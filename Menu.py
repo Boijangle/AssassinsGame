@@ -103,8 +103,8 @@ class Menu:
         self.game.check_wanted()
         while loop:
             self.print_menu('Edit Game: ' + self.name, 'Register Kill', 'View Alive Players',
-            'View Dead Players', 'View Wanted List', 'Add Player to Wanted List', 'Remove Player from Wanted List',
-            'Update Wanted List', 'Save', 'Back')
+            'View Dead Players', 'View Wanted List', 'Check Target', 'Check Assassin','Add Player to Wanted List', 'Remove Player from Wanted List',
+            'Save')
             choice = input("Enter choice [1-6]: ")
             if(choice == '1'):
                 killer = input("Killer: ")
@@ -126,25 +126,34 @@ class Menu:
                 print("Wanted List: \n")
                 self.game.print_wanted_list()
             elif(choice == '5'):
+                name = input("Player Name: ")
+                tar = self.game.get_target(name)
+                if tar != -1:
+                    print("\nTarget:")
+                    tar.print_player()
+                    print("\n")
+            elif(choice == '6'):
+                name = input("Player Name: ")
+                ass = self.game.get_assassin(name)
+                if ass != -1:
+                    print("\nAssassin:")
+                    ass.print_player()
+                    print("\n")
+            elif(choice == '7'):
                 wanted_name = input("Player name to add: ")
                 good = self.game.add_wanted(wanted_name)
                 if(good):
                     notes = input("Extra Notes: ")
                     self.game.log_event(self.log, wanted_name + " placed on wanted list", notes)
-            elif(choice == '6'):
+            elif(choice == '8'):
                 remove_name = input("Player name to remove: ")
                 good = self.game.remove_wanted(remove_name)
                 if(good):
                     notes = input("Extra Notes: ")
                     self.game.log_event(self.log, wanted_name + " placed on wanted list", notes)
-            elif(choice == '7'):
-                self.game.check_wanted()
-            elif(choice == '8'):
+            elif(choice == '9'):
                 print("Saving...")
                 self.game.save_csv(self.name)
-            elif(choice == '9'):
-                self.save_diag()
-                loop = False
             elif(choice == 'q'):
                 self.quit_diag()
             else:
