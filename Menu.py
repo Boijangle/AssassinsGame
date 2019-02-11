@@ -70,7 +70,7 @@ class Menu:
         while loop:
             self.print_menu('New Game: ' + self.name, 'Add Player', 'Remove Player',
             'View All Players', 'Shuffle Players', 'Save and Start', 'Back')
-            choice = input("Enter choice [1-5]: ")
+            choice = input("Enter choice [1-6]: ")
             if(choice == '1'):
                 player_name = input("Player Name: ")
                 self.game.add_player(player_name)
@@ -104,8 +104,8 @@ class Menu:
         while loop:
             self.print_menu('Edit Game: ' + self.name, 'Register Kill', 'View Alive Players',
             'View Dead Players', 'View Wanted List', 'Check Target', 'Check Assassin','Add Player to Wanted List', 'Remove Player from Wanted List',
-            'Save')
-            choice = input("Enter choice [1-6]: ")
+            'Shuffle Players','Save')
+            choice = input("Enter choice [1-10]: ")
             if(choice == '1'):
                 killer = input("Killer: ")
                 victim = input("Victim: ")
@@ -152,6 +152,9 @@ class Menu:
                     notes = input("Extra Notes: ")
                     self.game.log_event(self.log, wanted_name + " placed on wanted list", notes)
             elif(choice == '9'):
+                print("Shuffling...")
+                self.game.shuffle_players()
+            elif(choice == '10'):
                 print("Saving...")
                 self.game.save_csv(self.name)
             elif(choice == 'q'):
