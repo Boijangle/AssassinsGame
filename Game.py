@@ -54,20 +54,20 @@ class Game:
 
     def get_target(self, name):
         prev_ndx = self.get_index(name)
-        ndx = (prev_ndx + 1) % len(self.players)
-        if ndx is None:
+        if prev_ndx is None:
             print("Can't find player: " + name)
             return -1
         else:
+            ndx = (prev_ndx + 1) % len(self.players)
             return self.players[ndx]
 
     def get_assassin(self, name):
         prev_ndx = self.get_index(name)
-        ndx = (prev_ndx - 1) % len(self.players)
-        if ndx is None:
+        if prev_ndx is None:
             print("Can't find player: " + name)
             return -1
         else:
+            ndx = (prev_ndx - 1) % len(self.players)
             return self.players[ndx]
 
     def attempt_kill(self, killer_name, victim_name):
