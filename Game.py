@@ -147,6 +147,7 @@ class Game:
                 writer.writerow([x.id, x.name, x.alive, x.death_time, x.killer,
                 x.wanted, x.wanted_time, ', '.join(x.kills)])
 
+
     def load_csv(self, filename):
         with open(filename) as load_file:
             reader = csv.reader(load_file, delimiter=',')
@@ -177,7 +178,7 @@ class Game:
 
                     # add player back into game
                     player = Player(row[1], int(row[0]), alive, dtime,
-                    row[4], want, wtime, row[7].split())
+                    row[4], want, wtime, row[7].split(", "))
 
                     # add them to proper list
                     if player.is_alive():
